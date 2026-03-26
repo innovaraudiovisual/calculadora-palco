@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cálculo de Palco - Innovar</title>
+    <style>
+        :root { --primary: #2c3e50; --accent: #3498db; --piece2x1: #e67e22; --piece1x1: #27ae60; --dark: #34495e; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f4f4; padding: 10px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 550px; box-sizing: border-box; }
+        h2 { color: var(--primary); text-align: center; margin-top: 0; font-size: 22px; text-transform: uppercase; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        
+        .input-row { display: flex; gap: 10px; margin-top: 15px; }
+        .input-group { flex: 1; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 11px; color: #666; text-transform: uppercase; }
+        input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 16px; background: #fafafa; }
+        
+        .btn-calc { width: 100%; padding: 16px; background: var(--accent); color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 20px; text-transform: uppercase; }
+        .btn-pdf { width: 100%; padding: 16px; background: var(--dark); color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 15px; text-transform: uppercase; }
+        
+        #resultado { margin-top: 25px; }
+        .resumo-box { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+        .resumo-item { background: #fff; padding: 12px; border-radius: 8px; text-align: center; border: 1px solid #eee; }
+        .resumo-item small { display: block; font-size: 10px; font-weight: bold; color: #888; text-transform: uppercase; }
+        .resumo-item span { display: block; font-size: 20px; font-weight: bold; }
+        
+        .croqui-wrapper { display: flex; flex-direction: column; align-items: center; padding: 20px; margin-bottom: 5px; }
+        .medida-topo { font-weight: bold; font-size: 18px; margin-bottom: 10px; color: #000; }
+        .croqui-container-flex { display: flex; align-items: center; }
+        .medida-lateral { font-weight: bold; font-size: 18px; margin-right: 15px; writing-mode: vertical-rl; transform: rotate(180deg); color: #000; }
+        
+        #croqui { display: grid; gap: 5px; }
+        .peca { 
+            display: flex; align-items: center; justify-content: center; 
+            color: white; font-weight: bold; font-size: 13px; border-radius: 4px;
+            -webkit-print-color-adjust: exact; print-color-adjust: exact;
+        }
+        .p2x1 { background-color: var(--piece2x1) !important; border: 1px solid rgba(0,0,0,0.1); }
+        .p1x1 { background-color: var(--piece1x1) !important; border: 1px solid rgba(0,0,0,0.1); }
+
+        /* Créditos Visíveis apenas no App */
+        .creditos-pwa { text-align: center; margin-top: 10px; font-size: 9px; color: #bbb; text-transform: lowercase; letter-spacing: 0.5px; }
+
+        .header-pdf { display: none; text-align: center; margin-bottom: 30px; }
+        .title-pdf { font-size: 28px; font-weight: bold; color: #000; }
+
+        @media print {
+            @page { margin: 1.5cm; }
+            body { background: white; padding: 0; }
+            .btn-calc, .btn-pdf, .input-row, h2, label { display: none !important; }
+            .card { box-shadow: none; border: none; width: 100%; max-width: none; padding: 0; }
+            .header-pdf { display: block; }
+            .resumo-item { border: 1px solid #ccc; }
+            .peca { border: 1px solid #333; color: white !important; }
+            /* Remove os créditos na impressão */
+            .creditos-pwa { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Cálculo de Palco</h2>
+    
+    <div class="input-row">
+        <div class="input-group">
+            <label>Largura (m):</label>
+            <input type="number" id="largura" value="6" min="1">
+        </div>
+        <div class="input-group">
+            <label>Comprimento (m):</label>
+            <input type="number" id="comprimento" value="3" min="1">
+        </div>
+    </div>
+    
+    <button class="btn-calc" onclick="gerarPalco()">Calcular e Gerar Croqui</button>
+
+    <div id="resultado" style="display:none;">
+        
+        <div class="header-pdf">
+            <div class="title-pdf" id="print-header"></div>
+        </div>
+        
+        <div class="resumo-box">
+            <div class="resumo-item">
+                <small>Peças 2x1</small>
+                <span id="qtd2x1" style="color:var(--piece2x1)">0</span>
+            </div>
+            <div class="resumo-item">
+                <small>Peças 1x1</small>
+                <span id="qtd1x1" style="color:var(--piece1x1)">0</span>
+            </div>
+            <div class="resumo-item">
+                <small>Total Pés</small>
+                <span id="qtdPes">0</span>
+            </div>
+        </div>
+
+        <div class="croqui-wrapper">
+            <div class="medida-topo" id="label-largura">0m</div>
+            <div class="croqui-container-flex">
+                <div class="medida-lateral" id="label-comprimento">0m</div>
+                <div id="croqui"></div>
+            </div>
+        </div>
+
+        <button class="btn-pdf" onclick="window.print()">Gerar PDF / Imprimir</button>
+        
+        <div class="creditos-pwa">
+            dev inovar audiovisual agnaldo
+        </div>
+    </div>
+</div>
+
+<script>
+function gerarPalco() {
+    const L = parseInt(document.getElementById('largura').value);
+    const C = parseInt(document.getElementById('comprimento').value);
+    
+    if (!L || !C) return;
+
+    document.getElementById('print-header').innerText = `PALCO: ${L}M X ${C}M`;
+    document.getElementById('label-largura').innerText = `${L}m`;
+    document.getElementById('label-comprimento').innerText = `${C}m`;
+
+    const croqui = document.getElementById('croqui');
+    croqui.innerHTML = '';
+    document.getElementById('resultado').style.display = 'block';
+
+    let ocupado = Array(C).fill().map(() => Array(L).fill(false));
+    let n2x1 = 0, n1x1 = 0;
+
+    let escala = 50; 
+    croqui.style.gridTemplateColumns = `repeat(${L}, ${escala}px)`;
+    croqui.style.gridAutoRows = `${escala}px`;
+
+    for (let i = 0; i < C; i++) {
+        for (let j = 0; j < L; j++) {
+            if (ocupado[i][j]) continue;
+            let div = document.createElement('div');
+            div.className = 'peca';
+
+            if (j + 1 < L && !ocupado[i][j+1]) {
+                ocupado[i][j] = ocupado[i][j+1] = true;
+                div.classList.add('p2x1');
+                div.style.gridColumn = `span 2`;
+                div.innerText = '2x1';
+                n2x1++;
+            } else if (i + 1 < C && !ocupado[i+1][j]) {
+                ocupado[i][j] = ocupado[i+1][j] = true;
+                div.classList.add('p2x1');
+                div.style.gridRow = `span 2`;
+                div.innerText = '2x1';
+                n2x1++;
+            } else {
+                ocupado[i][j] = true;
+                div.classList.add('p1x1');
+                div.innerText = '1x1';
+                n1x1++;
+            }
+            croqui.appendChild(div);
+        }
+    }
+
+    document.getElementById('qtd2x1').innerText = n2x1;
+    document.getElementById('qtd1x1').innerText = n1x1;
+    document.getElementById('qtdPes').innerText = (n2x1 + n1x1) * 4;
+}
+</script>
+</body>
+</html>
