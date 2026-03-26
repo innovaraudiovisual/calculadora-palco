@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="manifest.json">
     <title>Cálculo de Palco - Innovar</title>
     <style>
         :root { --primary: #2c3e50; --accent: #3498db; --piece2x1: #e67e22; --piece1x1: #27ae60; --dark: #34495e; }
@@ -10,6 +11,10 @@
         .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 550px; box-sizing: border-box; }
         h2 { color: var(--primary); text-align: center; margin-top: 0; font-size: 22px; text-transform: uppercase; border-bottom: 2px solid #eee; padding-bottom: 10px; }
         
+        /* Estilo da Logo */
+        .logo-container { text-align: center; margin-bottom: 15px; }
+        .logo-img { max-width: 180px; height: auto; }
+
         .input-row { display: flex; gap: 10px; margin-top: 15px; }
         .input-group { flex: 1; }
         label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 11px; color: #666; text-transform: uppercase; }
@@ -38,21 +43,19 @@
         .p2x1 { background-color: var(--piece2x1) !important; border: 1px solid rgba(0,0,0,0.1); }
         .p1x1 { background-color: var(--piece1x1) !important; border: 1px solid rgba(0,0,0,0.1); }
 
-        /* Créditos Visíveis apenas no App */
         .creditos-pwa { text-align: center; margin-top: 10px; font-size: 9px; color: #bbb; text-transform: lowercase; letter-spacing: 0.5px; }
 
         .header-pdf { display: none; text-align: center; margin-bottom: 30px; }
-        .title-pdf { font-size: 28px; font-weight: bold; color: #000; }
+        .title-pdf { font-size: 24px; font-weight: bold; color: #000; margin-top: 10px; }
 
         @media print {
             @page { margin: 1.5cm; }
             body { background: white; padding: 0; }
-            .btn-calc, .btn-pdf, .input-row, h2, label { display: none !important; }
+            .btn-calc, .btn-pdf, .input-row, h2, label, .logo-container { display: none !important; }
             .card { box-shadow: none; border: none; width: 100%; max-width: none; padding: 0; }
             .header-pdf { display: block; }
             .resumo-item { border: 1px solid #ccc; }
             .peca { border: 1px solid #333; color: white !important; }
-            /* Remove os créditos na impressão */
             .creditos-pwa { display: none !important; }
         }
     </style>
@@ -60,6 +63,9 @@
 <body>
 
 <div class="card">
+    <div class="logo-container">
+        <img src="logopdf.png" alt="Innovar Audiovisual" class="logo-img">
+    </div>
     <h2>Cálculo de Palco</h2>
     
     <div class="input-row">
@@ -78,6 +84,7 @@
     <div id="resultado" style="display:none;">
         
         <div class="header-pdf">
+            <img src="logopdf.png" alt="Innovar Logo" style="max-width: 200px;">
             <div class="title-pdf" id="print-header"></div>
         </div>
         
@@ -119,7 +126,7 @@ function gerarPalco() {
     
     if (!L || !C) return;
 
-    document.getElementById('print-header').innerText = `PALCO: ${L}M X ${C}M`;
+    document.getElementById('print-header').innerText = `ESPECIFICAÇÕES TÉCNICAS: PALCO ${L}M X ${C}M`;
     document.getElementById('label-largura').innerText = `${L}m`;
     document.getElementById('label-comprimento').innerText = `${C}m`;
 
