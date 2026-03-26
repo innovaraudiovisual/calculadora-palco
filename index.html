@@ -52,8 +52,8 @@
     <div class="logo-container"><img src="logopdf.png" alt="Innovar" class="logo-img"></div>
     <h2>Cálculo de Palco</h2>
     <div class="input-row">
-        <div class="input-group"><label>Largura (m):</label><input type="number" id="largura" value="6"></div>
-        <div class="input-group"><label>Comprimento (m):</label><input type="number" id="comprimento" value="3"></div>
+        <div class="input-group"><label>Largura (m):</label><input type="number" id="largura" placeholder="0"></div>
+        <div class="input-group"><label>Comprimento (m):</label><input type="number" id="comprimento" placeholder="0"></div>
     </div>
     <button class="btn-calc" onclick="gerarPalco()">Calcular e Gerar Croqui</button>
     <div id="resultado" style="display:none;">
@@ -79,10 +79,18 @@
 </div>
 <script>
 function gerarPalco() {
-    const L = parseInt(document.getElementById('largura').value);
-    const C = parseInt(document.getElementById('comprimento').value);
-    if (!L || !C) return;
-    document.getElementById('print-header').innerText = `ORDEM DE MONTAGEM: PALCO ${L}M X ${C}M`;
+    const L_val = document.getElementById('largura').value;
+    const C_val = document.getElementById('comprimento').value;
+    
+    if (!L_val || !C_val) {
+        alert("Por favor, preencha a largura e o comprimento.");
+        return;
+    }
+
+    const L = parseInt(L_val);
+    const C = parseInt(C_val);
+
+    document.getElementById('print-header').innerText = `PALCO ${L}M X ${C}M`;
     document.getElementById('label-largura').innerText = `${L}m`;
     document.getElementById('label-comprimento').innerText = `${C}m`;
     const croqui = document.getElementById('croqui');
