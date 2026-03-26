@@ -1,0 +1,16 @@
+{
+  "name": "Calculadora de Palco Innovar",
+  "short_name": "Palco Innovar",
+  "description": "Cálculo e croqui de palcos.",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2c3e50",
+  "icons": [
+    {
+      "src": "logopdf.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
