@@ -3,104 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="manifest" href="manifest.json">
-    <title>Cálculo de Palco - Innovar</title>
+    <title>Innovar - Palco e LED</title>
     <style>
-        :root { --primary: #2c3e50; --accent: #3498db; --piece2x1: #e67e22; --piece1x1: #27ae60; --dark: #34495e; }
+        :root { 
+            --primary: #2c3e50; 
+            --accent: #3498db; 
+            --led-color: #9b59b6; 
+            --piece2x1: #e67e22; 
+            --piece1x1: #27ae60; 
+            --dark: #34495e; 
+            --cable-link: #2ecc71; 
+            --cable-ac: #e74c3c; 
+            --case-color: #f39c12;
+        }
         body { font-family: 'Segoe UI', sans-serif; background: #f4f4f4; padding: 10px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; margin: 0; }
-        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 550px; box-sizing: border-box; }
-        h2 { color: var(--primary); text-align: center; margin-top: 0; font-size: 20px; text-transform: uppercase; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 800px; box-sizing: border-box; }
+        
+        .tabs { display: flex; gap: 5px; margin-bottom: 20px; border-bottom: 2px solid #eee; }
+        .tab-btn { flex: 1; padding: 12px; border: none; background: #eee; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 12px; border-radius: 8px 8px 0 0; }
+        .tab-btn.active { background: var(--accent); color: white; }
+
         .logo-container { text-align: center; margin-bottom: 15px; }
-        .logo-img { max-width: 180px; height: auto; }
-        .input-row { display: flex; gap: 10px; margin-top: 15px; }
+        
+        .input-row { display: flex; gap: 10px; margin-top: 10px; }
         .input-group { flex: 1; }
         label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 11px; color: #666; text-transform: uppercase; }
         input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 16px; background: #fafafa; }
+        
         .btn-calc { width: 100%; padding: 16px; background: var(--accent); color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 20px; text-transform: uppercase; }
         .btn-pdf { width: 100%; padding: 16px; background: var(--dark); color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 15px; text-transform: uppercase; }
-        #resultado { margin-top: 25px; }
-        .resumo-box { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
-        .resumo-item { background: #fff; padding: 12px; border-radius: 8px; text-align: center; border: 1px solid #eee; }
-        .resumo-item small { display: block; font-size: 10px; font-weight: bold; color: #888; text-transform: uppercase; }
-        .resumo-item span { display: block; font-size: 20px; font-weight: bold; }
-        .croqui-wrapper { display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        .medida-topo { font-weight: bold; font-size: 18px; margin-bottom: 10px; color: #000; }
-        .croqui-container-flex { display: flex; align-items: center; }
-        .medida-lateral { font-weight: bold; font-size: 18px; margin-right: 15px; writing-mode: vertical-rl; transform: rotate(180deg); color: #000; }
-        #croqui { display: grid; gap: 5px; }
-        .peca { display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 13px; border-radius: 4px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-        .p2x1 { background-color: var(--piece2x1) !important; border: 1px solid rgba(0,0,0,0.1); }
-        .p1x1 { background-color: var(--piece1x1) !important; border: 1px solid rgba(0,0,0,0.1); }
-        .creditos-pwa { text-align: center; margin-top: 10px; font-size: 9px; color: #bbb; text-transform: lowercase; }
-        .header-pdf { display: none; text-align: center; margin-bottom: 20px; }
-        .title-pdf { font-size: 20px; font-weight: bold; color: #000; margin-top: 10px; border-top: 1px solid #eee; padding-top: 10px; }
+        
+        #resultado { margin-top: 25px; width: 100%; }
+        .resumo-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); gap: 10px; margin-bottom: 20px; }
+        .resumo-item { 
+            background: #fff; padding: 12px; border-radius: 8px; text-align: center; border: 1px solid #eee; 
+            display: flex; flex-direction: column; justify-content: center;
+        }
+        .resumo-item small { display: block; font-size: 9px; font-weight: bold; color: #888; text-transform: uppercase; margin-bottom: 5px; }
+        .resumo-item span { display: block; font-size: 15px; font-weight: bold; }
+        
+        .highlight-res { border: 2px solid var(--led-color) !important; color: var(--led-color); }
+        .highlight-cabo-link { border: 2px solid var(--cable-link) !important; color: #27ae60; }
+        .highlight-cabo-ac { border: 2px solid var(--cable-ac) !important; color: #c0392b; }
+        .highlight-case { border: 2px solid var(--case-color) !important; color: #d35400; }
+        .highlight-empty { border: 1px dashed #7f8c8d !important; background: #f9f9f9; color: #555; }
+
+        .croqui-container { 
+            width: 100%; 
+            overflow: auto; 
+            background: #222; 
+            padding: 20px; 
+            border-radius: 8px; 
+            margin-top: 10px;
+            box-sizing: border-box;
+            max-height: 500px;
+        }
+        #croqui { 
+            display: grid; 
+            gap: 2px; 
+            margin: 0 auto;
+            width: max-content;
+        }
+        .peca { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: white; 
+            font-weight: bold; 
+            font-size: 9px; 
+            border-radius: 2px;
+            min-width: 20px;
+            min-height: 20px;
+        }
+        
+        .p2x1 { background-color: var(--piece2x1); }
+        .p1x1 { background-color: var(--piece1x1); }
+        .pled-g { background-color: var(--led-color); border: 1px solid rgba(255,255,255,0.2); }
+        .pled-p { background-color: #8e44ad; border: 1px solid rgba(255,255,255,0.2); }
+
+        .creditos-pwa { text-align: center; margin-top: 15px; font-size: 9px; color: #bbb; text-transform: uppercase; }
 
         @media print {
-            @page { margin: 1cm; size: auto; }
-            html, body { height: 99%; overflow: hidden; background: white; }
-            .btn-calc, .btn-pdf, .input-row, h2, label, .logo-container, .creditos-pwa { display: none !important; }
-            .card { box-shadow: none; border: none; width: 100%; max-width: none; padding: 0; margin: 0; }
-            .header-pdf { display: block; }
-            .resumo-item { border: 1px solid #ccc; }
-            .peca { border: 1px solid #333; color: white !important; }
-            #resultado { margin-top: 0; page-break-inside: avoid; }
+            .tabs, .btn-calc, .btn-pdf, .input-row, .logo-container { display: none !important; }
+            .card { box-shadow: none; border: none; width: 100%; max-width: none; }
+            .croqui-container { overflow: visible; max-height: none; background: white; }
+            #croqui { gap: 1px; transform: scale(0.8); transform-origin: top left; }
+            .peca { color: black; border: 1px solid #000; }
         }
     </style>
 </head>
 <body>
+
 <div class="card">
-    <div class="logo-container"><img src="logopdf.png" alt="Innovar" class="logo-img"></div>
-    <h2>Cálculo de Palco</h2>
-    <div class="input-row">
-        <div class="input-group"><label>Largura (m):</label><input type="number" id="largura" placeholder="0"></div>
-        <div class="input-group"><label>Comprimento (m):</label><input type="number" id="comprimento" placeholder="0"></div>
+    <div class="logo-container"><h2 style="color: var(--primary); margin:0;">INNOVAR</h2><small>AUDIOVISUAL</small></div>
+    
+    <div class="tabs">
+        <button id="btn-tab-palco" class="tab-btn active" onclick="switchTab('palco')">Palco</button>
+        <button id="btn-tab-led" class="tab-btn" onclick="switchTab('led')">Painel LED</button>
     </div>
-    <button class="btn-calc" onclick="gerarPalco()">Calcular</button>
+
+    <div id="form-palco">
+        <div class="input-row">
+            <div class="input-group"><label>Largura (m):</label><input type="number" id="L_palco" placeholder="Ex: 6"></div>
+            <div class="input-group"><label>Comprimento (m):</label><input type="number" id="C_palco" placeholder="Ex: 4"></div>
+        </div>
+        <button class="btn-calc" onclick="calcularPalco()">Calcular Estrutura</button>
+    </div>
+
+    <div id="form-led" style="display:none;">
+        <div class="input-row">
+            <div class="input-group"><label>Largura (m):</label><input type="number" id="L_led" placeholder="Ex: 10.5" step="0.5"></div>
+            <div class="input-group"><label>Altura (m):</label><input type="number" id="H_led" placeholder="Ex: 2" step="0.5"></div>
+        </div>
+        <button class="btn-calc" onclick="calcularLED()">Calcular Painel</button>
+    </div>
+
     <div id="resultado" style="display:none;">
-        <div class="header-pdf">
-            <img src="logopdf.png" style="max-width: 180px;">
-            <div class="title-pdf" id="print-header"></div>
-        </div>
-        <div class="resumo-box">
-            <div class="resumo-item"><small>Peças 2x1</small><span id="qtd2x1" style="color:var(--piece2x1)">0</span></div>
-            <div class="resumo-item"><small>Peças 1x1</small><span id="qtd1x1" style="color:var(--piece1x1)">0</span></div>
-            <div class="resumo-item"><small>Total Pés</small><span id="qtdPes">0</span></div>
-        </div>
-        <div class="croqui-wrapper">
-            <div class="medida-topo" id="label-largura">0m</div>
-            <div class="croqui-container-flex">
-                <div class="medida-lateral" id="label-comprimento">0m</div>
-                <div id="croqui"></div>
-            </div>
-        </div>
+        <h3 id="print-header" style="text-align:center; color: var(--primary); border-bottom: 1px solid #eee; padding-bottom: 10px;"></h3>
+        <div id="resumo-content" class="resumo-box"></div>
+        <div class="croqui-container"><div id="croqui"></div></div>
         <button class="btn-pdf" onclick="window.print()">Gerar PDF / Imprimir</button>
         <div class="creditos-pwa">dev inovar audiovisual agnaldo</div>
     </div>
 </div>
+
 <script>
-function gerarPalco() {
-    const L_val = document.getElementById('largura').value;
-    const C_val = document.getElementById('comprimento').value;
-    
-    if (!L_val || !C_val) {
-        alert("Por favor, preencha a largura e o comprimento.");
-        return;
-    }
+function switchTab(tab) {
+    document.getElementById('form-palco').style.display = tab === 'palco' ? 'block' : 'none';
+    document.getElementById('form-led').style.display = tab === 'led' ? 'block' : 'none';
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('btn-tab-' + tab).classList.add('active');
+    document.getElementById('resultado').style.display = 'none';
+}
 
-    const L = parseInt(L_val);
-    const C = parseInt(C_val);
+const formatBR = (val) => val.toLocaleString('pt-BR');
 
-    document.getElementById('print-header').innerText = `PALCO ${L}M X ${C}M`;
-    document.getElementById('label-largura').innerText = `${L}m`;
-    document.getElementById('label-comprimento').innerText = `${C}m`;
+function calcularPalco() {
+    const L = parseInt(document.getElementById('L_palco').value);
+    const C = parseInt(document.getElementById('C_palco').value);
+    if(!L || !C) return alert("Preencha os valores!");
+    const resumo = document.getElementById('resumo-content');
     const croqui = document.getElementById('croqui');
     croqui.innerHTML = '';
-    document.getElementById('resultado').style.display = 'block';
-    let ocupado = Array(C).fill().map(() => Array(L).fill(false));
     let n2x1 = 0, n1x1 = 0;
-    let escala = 50; 
-    croqui.style.gridTemplateColumns = `repeat(${L}, ${escala}px)`;
-    croqui.style.gridAutoRows = `${escala}px`;
+    let ocupado = Array(C).fill().map(() => Array(L).fill(false));
+    const size = L > 10 ? 25 : 40; 
+    croqui.style.gridTemplateColumns = `repeat(${L}, ${size}px)`;
     for (let i = 0; i < C; i++) {
         for (let j = 0; j < L; j++) {
             if (ocupado[i][j]) continue;
@@ -108,28 +156,83 @@ function gerarPalco() {
             div.className = 'peca';
             if (j + 1 < L && !ocupado[i][j+1]) {
                 ocupado[i][j] = ocupado[i][j+1] = true;
-                div.classList.add('p2x1');
-                div.style.gridColumn = `span 2`;
-                div.innerText = '2x1';
-                n2x1++;
-            } else if (i + 1 < C && !ocupado[i+1][j]) {
-                ocupado[i][j] = ocupado[i+1][j] = true;
-                div.classList.add('p2x1');
-                div.style.gridRow = `span 2`;
-                div.innerText = '2x1';
-                n2x1++;
+                div.classList.add('p2x1'); div.style.gridColumn = 'span 2'; div.innerText = '2x1'; n2x1++;
             } else {
                 ocupado[i][j] = true;
-                div.classList.add('p1x1');
-                div.innerText = '1x1';
-                n1x1++;
+                div.classList.add('p1x1'); div.innerText = '1x1'; n1x1++;
             }
+            div.style.height = `${size}px`;
             croqui.appendChild(div);
         }
     }
-    document.getElementById('qtd2x1').innerText = n2x1;
-    document.getElementById('qtd1x1').innerText = n1x1;
-    document.getElementById('qtdPes').innerText = (n2x1 + n1x1) * 4;
+    resumo.innerHTML = `
+        <div class="resumo-item"><small>Praticáveis 2x1m</small><span>${n2x1}</span></div>
+        <div class="resumo-item"><small>Praticáveis 1x1m</small><span>${n1x1}</span></div>
+        <div class="resumo-item"><small>Total de Pés</small><span>${(n2x1 + n1x1) * 4}</span></div>
+        <div class="resumo-item"><small>Área Total</small><span>${formatBR(L * C)} m²</span></div>
+    `;
+    document.getElementById('print-header').innerText = `PALCO: ${L}m x ${C}m`;
+    document.getElementById('resultado').style.display = 'block';
+}
+
+function calcularLED() {
+    const L = parseFloat(document.getElementById('L_led').value);
+    const H = parseFloat(document.getElementById('H_led').value);
+    if(!L || !H) return alert("Preencha os valores!");
+
+    const resumo = document.getElementById('resumo-content');
+    const croqui = document.getElementById('croqui');
+    croqui.innerHTML = '';
+
+    const cols05 = Math.round(L / 0.5);
+    const rows05 = Math.round(H / 0.5);
+    const resW = cols05 * 128;
+    const resH = rows05 * 128;
+    const area = L * H;
+    const qtdCabos = Math.max(2, Math.ceil((area / 9) * 15));
+
+    let pxSize = cols05 > 20 ? (cols05 > 40 ? 15 : 20) : 30;
+    croqui.style.gridTemplateColumns = `repeat(${cols05}, ${pxSize}px)`;
+    let p10 = 0, p05 = 0;
+
+    for (let r = 0; r < rows05; r++) {
+        for (let c = 0; c < cols05; c++) {
+            let div = document.createElement('div');
+            div.className = 'peca';
+            if (c + 1 < cols05) {
+                div.classList.add('pled-g'); div.style.gridColumn = 'span 2'; div.innerText = '1m';
+                p10++; c++;
+            } else {
+                div.classList.add('pled-p'); div.innerText = '.5'; p05++;
+            }
+            div.style.height = `${pxSize}px`;
+            croqui.appendChild(div);
+        }
+    }
+
+    const capG = 6;
+    const capP = 8;
+    const casesG = Math.ceil(p10 / capG);
+    const casesP = Math.ceil(p05 / capP);
+    
+    // Sobras individuais por tipo
+    const sobraG = (casesG * capG) - p10;
+    const sobraP = (casesP * capP) - p05;
+
+    resumo.innerHTML = `
+        <div class="resumo-item highlight-res"><small>Resolução (Pixels)</small><span>${resW} x ${resH}</span></div>
+        <div class="resumo-item highlight-cabo-link"><small>Cabos LINK</small><span>${qtdCabos} un</span></div>
+        <div class="resumo-item highlight-cabo-ac"><small>Cabos AC</small><span>${qtdCabos} un</span></div>
+        <div class="resumo-item"><small>Placas 100x50cm</small><span>${p10}</span></div>
+        <div class="resumo-item"><small>Placas 50x50cm</small><span>${p05}</span></div>
+        <div class="resumo-item highlight-case"><small>Total de Cases</small><span>${casesG + casesP}</span></div>
+        <div class="resumo-item highlight-empty"><small>Backup Placas 1m</small><span>${sobraG} un</span></div>
+        <div class="resumo-item highlight-empty"><small>Backup Placas 0.5m</small><span>${sobraP} un</span></div>
+        <div class="resumo-item"><small>Área Total</small><span>${formatBR(area)} m²</span></div>
+    `;
+
+    document.getElementById('print-header').innerText = `PAINEL LED: ${formatBR(L)}m x ${formatBR(H)}m`;
+    document.getElementById('resultado').style.display = 'block';
 }
 </script>
 </body>
