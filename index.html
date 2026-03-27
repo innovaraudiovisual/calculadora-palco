@@ -42,21 +42,19 @@
         .resumo-item small { display: block; font-size: 9px; font-weight: bold; color: #888; text-transform: uppercase; margin-bottom: 5px; }
         .resumo-item span { display: block; font-size: 15px; font-weight: bold; }
         
-        /* CORES DOS BORDAS E DESTAQUES */
         .highlight-res { border: 2px solid var(--led-color) !important; color: var(--led-color); }
         .highlight-cabo-link { border: 2px solid var(--cable-link) !important; color: #27ae60; }
         .highlight-cabo-ac { border: 2px solid var(--cable-ac) !important; color: #c0392b; }
         .highlight-case { border: 2px solid var(--case-color) !important; color: #d35400; }
         .highlight-empty { border: 1px dashed #7f8c8d !important; background: #f9f9f9; color: #555; }
 
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; padding: 10px; box-sizing: border-box; }
-        .modal-content { background: #222; max-width: 98%; width: fit-content; max-height: 85vh; border-radius: 12px; position: relative; padding: 45px 15px 15px 15px; overflow: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.6); display: flex; flex-direction: column; }
-        .btn-close-modal { position: absolute; top: 10px; right: 10px; background: #e74c3c; color: white; border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 18px; font-weight: bold; cursor: pointer; z-index: 1001; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; padding: 10px; box-sizing: border-box; }
+        .modal-content { background: #222; max-width: 98%; width: fit-content; max-height: 90vh; border-radius: 12px; position: relative; padding: 40px 15px 15px 15px; overflow: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.6); display: flex; flex-direction: column; }
+        .btn-close-modal { position: absolute; top: 8px; right: 8px; background: #e74c3c; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; font-size: 18px; font-weight: bold; cursor: pointer; z-index: 1001; }
         
-        #croqui { display: grid; gap: 2px; margin: 0 auto; padding: 10px; }
+        #croqui { display: grid; gap: 2px; margin: 0 auto; }
         .peca { display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 8px; border-radius: 2px; min-width: 22px; min-height: 22px; }
         
-        /* Cores das peças no desenho */
         .p2x1 { background-color: var(--piece2x1); }
         .p1x1 { background-color: var(--piece1x1); }
         .pled-g { background-color: var(--led-color); border: 1px solid rgba(255,255,255,0.2); }
@@ -104,7 +102,7 @@
         <div id="resumo-content" class="resumo-box"></div>
         
         <button id="btn-view-led" class="btn-open-modal" onclick="openModal()">
-            VISUALIZAR PAINEL DE LED
+            VISUALIZAR DESENHO
         </button>
 
         <button class="btn-pdf" onclick="window.print()">Gerar PDF / Imprimir</button>
@@ -115,7 +113,6 @@
 <div id="modal-croqui" class="modal-overlay" onclick="closeModalExterno(event)">
     <div class="modal-content">
         <button class="btn-close-modal" onclick="closeModal()">×</button>
-        <h4 style="color: #fff; margin: -10px 0 10px 0; text-align: center; text-transform: uppercase; font-size: 11px;">Mapa de Montagem</h4>
         <div id="croqui"></div>
     </div>
 </div>
@@ -138,9 +135,9 @@ const formatBR = (val) => val.toLocaleString('pt-BR');
 function calcularPalco() {
     const L = parseInt(document.getElementById('L_palco').value);
     const C = parseInt(document.getElementById('C_palco').value);
-    if(!L || !C) return alert("Preencha os valores!");
+    if(!L || !C) return;
     
-    document.getElementById('btn-view-led').innerText = "VISUALIZAR PALCO";
+    document.getElementById('btn-view-led').innerText = "VISUALIZAR DESENHO PALCO";
     const resumo = document.getElementById('resumo-content');
     const croqui = document.getElementById('croqui');
     croqui.innerHTML = '';
@@ -179,9 +176,9 @@ function calcularPalco() {
 function calcularLED() {
     const L = parseFloat(document.getElementById('L_led').value);
     const H = parseFloat(document.getElementById('H_led').value);
-    if(!L || !H) return alert("Preencha os valores!");
+    if(!L || !H) return;
 
-    document.getElementById('btn-view-led').innerText = "VISUALIZAR PAINEL DE LED";
+    document.getElementById('btn-view-led').innerText = "VISUALIZAR DESENHO PAINEL";
     const resumo = document.getElementById('resumo-content');
     const croqui = document.getElementById('croqui');
     croqui.innerHTML = '';
@@ -189,9 +186,11 @@ function calcularLED() {
     const cols05 = Math.round(L / 0.5);
     const rows05 = Math.round(H / 0.5);
     const area = L * H;
+    
+    // REGRA INICIAL DE CABOS (PROPORCIONAL À ÁREA)
     const qtdCabos = Math.max(2, Math.ceil((area / 9) * 15));
-    let pxSize = cols05 > 30 ? 15 : 24;
 
+    let pxSize = cols05 > 30 ? 15 : 24;
     croqui.style.gridTemplateColumns = `repeat(${cols05}, ${pxSize}px)`;
     let p10 = 0, p05 = 0;
 
@@ -216,7 +215,7 @@ function calcularLED() {
 
     resumo.innerHTML = `
         <div class="resumo-item highlight-res"><small>Resolução</small><span>${cols05*128}x${rows05*128}</span></div>
-        <div class="resumo-item highlight-cabo-link"><small>Cabos LINK</small><span>${qtdCabos} un</span></div>
+        <div class="resumo-item highlight-cabo-link"><small>Cabos Link</small><span>${qtdCabos} un</span></div>
         <div class="resumo-item highlight-cabo-ac"><small>Cabos AC</small><span>${qtdCabos} un</span></div>
         <div class="resumo-item"><small>Placas 1m</small><span>${p10}</span></div>
         <div class="resumo-item"><small>Placas 0.5m</small><span>${p05}</span></div>
