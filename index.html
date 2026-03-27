@@ -33,28 +33,30 @@
         .btn-calc { width: 100%; padding: 16px; background: var(--accent); color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 20px; text-transform: uppercase; }
         .btn-pdf { width: 100%; padding: 16px; background: var(--dark); color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 15px; text-transform: uppercase; }
         
-        /* Botão para mostrar/esconder desenho */
-        .btn-toggle-view { width: 100%; padding: 12px; background: #ebf5fb; color: var(--accent); border: 2px solid var(--accent); border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer; margin-top: 10px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-open-modal { width: 100%; padding: 14px; background: #fff; color: var(--accent); border: 2px solid var(--accent); border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer; margin-top: 10px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        .btn-open-modal:hover { background: var(--accent); color: white; }
 
         #resultado { margin-top: 25px; width: 100%; }
-        .resumo-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); gap: 10px; margin-bottom: 10px; }
+        .resumo-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); gap: 10px; margin-bottom: 15px; }
         .resumo-item { background: #fff; padding: 12px; border-radius: 8px; text-align: center; border: 1px solid #eee; display: flex; flex-direction: column; justify-content: center; }
         .resumo-item small { display: block; font-size: 9px; font-weight: bold; color: #888; text-transform: uppercase; margin-bottom: 5px; }
         .resumo-item span { display: block; font-size: 15px; font-weight: bold; }
         
+        /* CORES DOS BORDAS E DESTAQUES */
         .highlight-res { border: 2px solid var(--led-color) !important; color: var(--led-color); }
         .highlight-cabo-link { border: 2px solid var(--cable-link) !important; color: #27ae60; }
         .highlight-cabo-ac { border: 2px solid var(--cable-ac) !important; color: #c0392b; }
         .highlight-case { border: 2px solid var(--case-color) !important; color: #d35400; }
         .highlight-empty { border: 1px dashed #7f8c8d !important; background: #f9f9f9; color: #555; }
 
-        /* ESTILO DO COLLAPSE (DESENHO) */
-        .croqui-wrapper { display: none; width: 100%; overflow: auto; background: #222; padding: 20px; border-radius: 8px; margin-top: 10px; box-sizing: border-box; max-height: 400px; }
-        .croqui-wrapper.active { display: block; }
-
-        #croqui { display: grid; gap: 2px; margin: 0 auto; width: max-content; }
-        .peca { display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 8px; border-radius: 2px; min-width: 18px; min-height: 18px; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; padding: 10px; box-sizing: border-box; }
+        .modal-content { background: #222; max-width: 98%; width: fit-content; max-height: 85vh; border-radius: 12px; position: relative; padding: 45px 15px 15px 15px; overflow: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.6); display: flex; flex-direction: column; }
+        .btn-close-modal { position: absolute; top: 10px; right: 10px; background: #e74c3c; color: white; border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 18px; font-weight: bold; cursor: pointer; z-index: 1001; }
         
+        #croqui { display: grid; gap: 2px; margin: 0 auto; padding: 10px; }
+        .peca { display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 8px; border-radius: 2px; min-width: 22px; min-height: 22px; }
+        
+        /* Cores das peças no desenho */
         .p2x1 { background-color: var(--piece2x1); }
         .p1x1 { background-color: var(--piece1x1); }
         .pled-g { background-color: var(--led-color); border: 1px solid rgba(255,255,255,0.2); }
@@ -63,10 +65,11 @@
         .creditos-pwa { text-align: center; margin-top: 15px; font-size: 9px; color: #bbb; text-transform: uppercase; }
 
         @media print {
-            .tabs, .btn-calc, .btn-pdf, .btn-toggle-view, .input-row, .logo-container { display: none !important; }
-            .croqui-wrapper { display: block !important; overflow: visible; max-height: none; background: white; }
+            .tabs, .btn-calc, .btn-pdf, .btn-open-modal, .input-row, .logo-container, .btn-close-modal { display: none !important; }
+            .modal-overlay { position: relative; display: block !important; background: white; padding: 0; }
+            .modal-content { background: white; max-width: 100%; width: 100%; box-shadow: none; padding: 0; }
             #croqui { gap: 1px; transform: scale(0.7); transform-origin: top left; }
-            .peca { color: black; border: 1px solid #000; }
+            .peca { color: black !important; border: 1px solid #000 !important; background: none !important; }
         }
     </style>
 </head>
@@ -97,20 +100,23 @@
     </div>
 
     <div id="resultado" style="display:none;">
-        <h3 id="print-header" style="text-align:center; color: var(--primary); margin-bottom:15px; border-bottom: 1px solid #eee; padding-bottom: 5px;"></h3>
-        
+        <h3 id="print-header" style="text-align:center; color: var(--primary); border-bottom: 1px solid #eee; padding-bottom: 5px;"></h3>
         <div id="resumo-content" class="resumo-box"></div>
         
-        <button class="btn-toggle-view" onclick="toggleCroqui()">
-            🔍 VER / ESCONDER DESENHO DO PROJETO
+        <button id="btn-view-led" class="btn-open-modal" onclick="openModal()">
+            VISUALIZAR PAINEL DE LED
         </button>
-
-        <div id="croqui-container" class="croqui-wrapper">
-            <div id="croqui"></div>
-        </div>
 
         <button class="btn-pdf" onclick="window.print()">Gerar PDF / Imprimir</button>
         <div class="creditos-pwa">dev inovar audiovisual agnaldo</div>
+    </div>
+</div>
+
+<div id="modal-croqui" class="modal-overlay" onclick="closeModalExterno(event)">
+    <div class="modal-content">
+        <button class="btn-close-modal" onclick="closeModal()">×</button>
+        <h4 style="color: #fff; margin: -10px 0 10px 0; text-align: center; text-transform: uppercase; font-size: 11px;">Mapa de Montagem</h4>
+        <div id="croqui"></div>
     </div>
 </div>
 
@@ -123,10 +129,9 @@ function switchTab(tab) {
     document.getElementById('resultado').style.display = 'none';
 }
 
-function toggleCroqui() {
-    const container = document.getElementById('croqui-container');
-    container.classList.toggle('active');
-}
+function openModal() { document.getElementById('modal-croqui').style.display = 'flex'; }
+function closeModal() { document.getElementById('modal-croqui').style.display = 'none'; }
+function closeModalExterno(e) { if(e.target.id === 'modal-croqui') closeModal(); }
 
 const formatBR = (val) => val.toLocaleString('pt-BR');
 
@@ -135,14 +140,14 @@ function calcularPalco() {
     const C = parseInt(document.getElementById('C_palco').value);
     if(!L || !C) return alert("Preencha os valores!");
     
-    document.getElementById('croqui-container').classList.remove('active'); // Inicia fechado
+    document.getElementById('btn-view-led').innerText = "VISUALIZAR PALCO";
     const resumo = document.getElementById('resumo-content');
     const croqui = document.getElementById('croqui');
     croqui.innerHTML = '';
     
     let n2x1 = 0, n1x1 = 0;
     let ocupado = Array(C).fill().map(() => Array(L).fill(false));
-    let size = L > 15 ? 15 : 25;
+    let size = L > 15 ? 18 : 30;
 
     croqui.style.gridTemplateColumns = `repeat(${L}, ${size}px)`;
     for (let i = 0; i < C; i++) {
@@ -176,7 +181,7 @@ function calcularLED() {
     const H = parseFloat(document.getElementById('H_led').value);
     if(!L || !H) return alert("Preencha os valores!");
 
-    document.getElementById('croqui-container').classList.remove('active'); // Inicia fechado
+    document.getElementById('btn-view-led').innerText = "VISUALIZAR PAINEL DE LED";
     const resumo = document.getElementById('resumo-content');
     const croqui = document.getElementById('croqui');
     croqui.innerHTML = '';
@@ -185,7 +190,7 @@ function calcularLED() {
     const rows05 = Math.round(H / 0.5);
     const area = L * H;
     const qtdCabos = Math.max(2, Math.ceil((area / 9) * 15));
-    let pxSize = cols05 > 30 ? 12 : 18;
+    let pxSize = cols05 > 30 ? 15 : 24;
 
     croqui.style.gridTemplateColumns = `repeat(${cols05}, ${pxSize}px)`;
     let p10 = 0, p05 = 0;
@@ -215,13 +220,13 @@ function calcularLED() {
         <div class="resumo-item highlight-cabo-ac"><small>Cabos AC</small><span>${qtdCabos} un</span></div>
         <div class="resumo-item"><small>Placas 1m</small><span>${p10}</span></div>
         <div class="resumo-item"><small>Placas 0.5m</small><span>${p05}</span></div>
-        <div class="resumo-item highlight-case"><small>Total Cases</small><span>${casesG + casesP}</span></div>
+        <div class="resumo-item highlight-case"><small>Total de Cases</small><span>${casesG + casesP}</span></div>
         <div class="resumo-item highlight-empty"><small>Backup 1m</small><span>${sobraG} un</span></div>
         <div class="resumo-item highlight-empty"><small>Backup 0.5m</small><span>${sobraP} un</span></div>
         <div class="resumo-item"><small>Área Total</small><span>${formatBR(area)} m²</span></div>
     `;
 
-    document.getElementById('print-header').innerText = `LED: ${formatBR(L)}m x ${formatBR(H)}m`;
+    document.getElementById('print-header').innerText = `PAINEL LED: ${formatBR(L)}m x ${formatBR(H)}m`;
     document.getElementById('resultado').style.display = 'block';
 }
 </script>
