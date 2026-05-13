@@ -1,249 +1,649 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Innovar - Palco e LED</title>
-    <style>
-        :root { 
-            --primary: #2c3e50; 
-            --accent: #3498db; 
-            --led-color: #9b59b6; 
-            --piece2x1: #e67e22; 
-            --piece1x1: #27ae60; 
-            --dark: #34495e; 
-            --cable-link: #2ecc71; 
-            --cable-ac: #e74c3c; 
-            --case-color: #f39c12;
-        }
-        body { font-family: 'Segoe UI', sans-serif; background: #f4f4f4; padding: 10px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; margin: 0; }
-        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 800px; box-sizing: border-box; }
-        
-        .tabs { display: flex; gap: 5px; margin-bottom: 20px; border-bottom: 2px solid #eee; }
-        .tab-btn { flex: 1; padding: 12px; border: none; background: #eee; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 12px; border-radius: 8px 8px 0 0; }
-        .tab-btn.active { background: var(--accent); color: white; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Innovar — Palco & LED</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;600;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #0d0f14;
+  --surface:   #161921;
+  --surface2:  #1e2230;
+  --border:    rgba(255,255,255,0.07);
+  --border2:   rgba(255,255,255,0.14);
+  --accent:    #00d4ff;
+  --accent2:   #ff6b35;
+  --text:      #e8eaf0;
+  --muted:     #5a6070;
+  --error:     #ff4757;
+  --piece2x1:  #e67e22;
+  --piece1x1:  #27ae60;
+  --led-g:     #7c3aed;
+  --led-p:     #5b21b6;
+}
 
-        .logo-container { text-align: center; margin-bottom: 15px; }
-        
-        .input-row { display: flex; gap: 10px; margin-top: 10px; }
-        .input-group { flex: 1; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 11px; color: #666; text-transform: uppercase; }
-        input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 16px; background: #fafafa; }
-        
-        .btn-calc { width: 100%; padding: 16px; background: var(--accent); color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 20px; text-transform: uppercase; }
-        .btn-pdf { width: 100%; padding: 16px; background: var(--dark); color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; margin-top: 15px; text-transform: uppercase; }
-        
-        .btn-open-modal { width: 100%; padding: 14px; background: #fff; color: var(--accent); border: 2px solid var(--accent); border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer; margin-top: 10px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
-        .btn-open-modal:hover { background: var(--accent); color: white; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        #resultado { margin-top: 25px; width: 100%; }
-        .resumo-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); gap: 10px; margin-bottom: 15px; }
-        .resumo-item { background: #fff; padding: 12px; border-radius: 8px; text-align: center; border: 1px solid #eee; display: flex; flex-direction: column; justify-content: center; }
-        .resumo-item small { display: block; font-size: 9px; font-weight: bold; color: #888; text-transform: uppercase; margin-bottom: 5px; }
-        .resumo-item span { display: block; font-size: 15px; font-weight: bold; }
-        
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; padding: 10px; box-sizing: border-box; }
-        .modal-content { background: #222; max-width: 98%; width: fit-content; max-height: 90vh; border-radius: 12px; position: relative; padding: 40px; overflow: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
-        .btn-close-modal { position: absolute; top: 10px; right: 10px; background: #e74c3c; color: white; border: none; border-radius: 50%; width: 30px; height: 30px; font-size: 18px; font-weight: bold; cursor: pointer; z-index: 1001; }
-        
-        .drawing-wrapper { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto 1fr; gap: 10px; align-items: center; justify-items: center; position: relative; }
-        .measure-top { grid-column: 2; text-align: center; color: #3498db; font-weight: bold; font-size: 14px; border-bottom: 2px solid #3498db; width: 100%; padding-bottom: 4px; }
-        .measure-left { grid-row: 2; writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg); color: #3498db; font-weight: bold; font-size: 14px; border-left: 2px solid #3498db; height: 100%; padding-left: 4px; display: flex; align-items: center; justify-content: center; }
-        
-        #croqui-container { grid-column: 2; grid-row: 2; position: relative; display: inline-block; }
-        #croqui { display: grid; gap: 2px; }
-        .peca { display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 8px; border-radius: 2px; min-width: 22px; min-height: 22px; }
-        
-        /* RESOLUÇÃO NO CENTRO */
-        .centro-info { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.7); color: #fff; padding: 5px 10px; border-radius: 4px; font-weight: bold; font-size: 14px; text-align: center; border: 1px solid #3498db; pointer-events: none; z-index: 5; white-space: nowrap; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 16px 48px;
+  position: relative;
+  overflow-x: hidden;
+}
 
-        .p2x1 { background-color: var(--piece2x1); }
-        .p1x1 { background-color: var(--piece1x1); }
-        .pled-g { background-color: var(--led-color); border: 1px solid rgba(255,255,255,0.2); }
-        .pled-p { background-color: #8e44ad; border: 1px solid rgba(255,255,255,0.2); }
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
 
-        .creditos-pwa { text-align: center; margin-top: 15px; font-size: 9px; color: #bbb; text-transform: uppercase; }
+body::after {
+  content: '';
+  position: fixed;
+  top: -200px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 400px;
+  background: radial-gradient(ellipse, rgba(0,212,255,0.06) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
 
-        @media print {
-            .tabs, .btn-calc, .btn-pdf, .btn-open-modal, .input-row, .logo-container, .btn-close-modal { display: none !important; }
-            .modal-overlay { position: relative; display: block !important; background: white; padding: 0; }
-            .modal-content { background: white; max-width: 100%; width: 100%; box-shadow: none; padding: 0; }
-            .measure-top, .measure-left { color: black; border-color: black; }
-            .centro-info { color: black; background: white; border: 1px solid black; }
-            .peca { color: black !important; border: 1px solid #000 !important; background: none !important; }
-        }
-    </style>
+.wrap { width: 100%; max-width: 560px; position: relative; z-index: 1; }
+
+/* HEADER */
+.header { text-align: center; margin-bottom: 32px; animation: fadeDown 0.6s ease both; }
+
+.logo-line {
+  display: flex; align-items: center; justify-content: center;
+  gap: 14px; margin-bottom: 6px;
+}
+
+.logo-icon {
+  width: 38px; height: 38px;
+  border: 1.5px solid var(--accent);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.logo-text {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800; font-size: 36px;
+  letter-spacing: 4px; color: #fff; text-transform: uppercase;
+}
+
+.logo-sub {
+  font-size: 11px; letter-spacing: 5px;
+  text-transform: uppercase; color: var(--muted);
+}
+
+/* CARD */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  animation: fadeUp 0.5s ease 0.1s both;
+}
+
+/* TABS */
+.tabs {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 6px; margin-bottom: 28px;
+  background: var(--bg); border-radius: 10px; padding: 4px;
+}
+
+.tab-btn {
+  padding: 11px; border: none; background: transparent;
+  color: var(--muted);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600; font-size: 14px;
+  letter-spacing: 2px; text-transform: uppercase;
+  cursor: pointer; border-radius: 7px; transition: all 0.25s;
+}
+
+.tab-btn.active {
+  background: var(--surface2);
+  color: var(--accent);
+  box-shadow: 0 0 0 1px var(--border2);
+}
+
+/* FORM */
+.input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+
+.field label {
+  display: block; font-size: 10px; font-weight: 500;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 8px;
+}
+
+.input-wrap { position: relative; }
+
+.input-wrap input {
+  width: 100%; padding: 13px 40px 13px 14px;
+  background: var(--bg);
+  border: 1px solid var(--border2);
+  border-radius: 8px; color: var(--text);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 22px; font-weight: 600; letter-spacing: 1px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  -moz-appearance: textfield;
+}
+
+.input-wrap input::-webkit-outer-spin-button,
+.input-wrap input::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+.input-wrap input:focus {
+  outline: none; border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(0,212,255,0.1);
+}
+
+.input-wrap input.input-error {
+  border-color: var(--error);
+  box-shadow: 0 0 0 3px rgba(255,71,87,0.1);
+}
+
+.input-unit {
+  position: absolute; right: 12px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 11px; color: var(--muted);
+  letter-spacing: 1px; pointer-events: none;
+}
+
+.field-error { color: var(--error); font-size: 11px; margin-top: 5px; display: none; }
+.field-error.visible { display: block; }
+
+/* BOTÃO CALCULAR */
+.btn-calc {
+  width: 100%; padding: 16px;
+  background: var(--accent); color: #000;
+  border: none; border-radius: 10px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800; font-size: 15px;
+  letter-spacing: 3px; text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.2s;
+}
+
+.btn-calc:hover {
+  box-shadow: 0 0 28px rgba(0,212,255,0.4);
+  transform: translateY(-1px);
+}
+
+.btn-calc:active { transform: translateY(0); box-shadow: none; }
+
+/* RESULTADO */
+#resultado { margin-top: 24px; animation: fadeUp 0.4s ease both; }
+
+.result-header {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 16px; padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.result-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent); box-shadow: 0 0 8px var(--accent); flex-shrink: 0;
+}
+
+.result-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 18px; font-weight: 600;
+  letter-spacing: 2px; text-transform: uppercase; color: #fff;
+}
+
+.resumo-box {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px; margin-bottom: 16px;
+}
+
+.resumo-item {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 12px;
+  text-align: center; transition: border-color 0.2s;
+}
+
+.resumo-item:hover { border-color: var(--border2); }
+
+.resumo-item small {
+  display: block; font-size: 9px; font-weight: 500;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 6px;
+}
+
+.resumo-item span {
+  display: block;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 22px; font-weight: 600;
+  color: #fff; letter-spacing: 1px;
+}
+
+.resumo-item.highlight span { color: var(--accent); }
+
+/* AÇÕES */
+.btn-view {
+  width: 100%; padding: 14px;
+  background: transparent;
+  border: 1px solid var(--border2); border-radius: 10px;
+  color: var(--text);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600; font-size: 13px;
+  letter-spacing: 2px; text-transform: uppercase;
+  cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  margin-bottom: 8px;
+}
+
+.btn-view:hover { border-color: var(--accent); color: var(--accent); background: rgba(0,212,255,0.05); }
+
+.btn-pdf {
+  width: 100%; padding: 14px;
+  background: transparent;
+  border: 1px solid var(--border); border-radius: 10px;
+  color: var(--muted);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600; font-size: 13px;
+  letter-spacing: 2px; text-transform: uppercase;
+  cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+
+.btn-pdf:hover { border-color: var(--border2); color: var(--text); }
+
+.divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+
+/* MODAL */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.9);
+  z-index: 1000;
+  justify-content: center; align-items: center;
+  padding: 16px; backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 16px; position: relative;
+  padding: 40px; max-width: 98%; width: fit-content;
+  max-height: 90vh; overflow: auto;
+}
+
+.btn-close-modal {
+  position: absolute; top: 12px; right: 12px;
+  background: var(--surface2); border: 1px solid var(--border2);
+  color: var(--muted); border-radius: 6px;
+  width: 30px; height: 30px; font-size: 18px; font-weight: bold;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  line-height: 1; transition: color 0.2s, border-color 0.2s;
+}
+
+.btn-close-modal:hover { color: var(--text); border-color: var(--accent); }
+
+.drawing-wrapper {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto 1fr;
+  gap: 10px; align-items: center; justify-items: center;
+}
+
+.measure-top {
+  grid-column: 2; text-align: center; color: var(--accent);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600; font-size: 14px; letter-spacing: 2px;
+  border-bottom: 1px solid var(--accent);
+  width: 100%; padding-bottom: 6px;
+}
+
+.measure-left {
+  grid-row: 2; writing-mode: vertical-rl; text-orientation: mixed;
+  transform: rotate(180deg); color: var(--accent);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600; font-size: 14px; letter-spacing: 2px;
+  border-left: 1px solid var(--accent);
+  height: 100%; padding-left: 6px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+#croqui-container { grid-column: 2; grid-row: 2; position: relative; display: inline-block; }
+#croqui { display: grid; gap: 2px; }
+
+.peca {
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.8);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600; font-size: 9px; letter-spacing: 0.5px;
+  border-radius: 2px; min-width: 22px; min-height: 22px;
+}
+
+.centro-info {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0,0,0,0.8); color: var(--accent);
+  padding: 6px 12px; border-radius: 6px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600; font-size: 15px; letter-spacing: 2px;
+  border: 1px solid rgba(0,212,255,0.3);
+  pointer-events: none; z-index: 5; white-space: nowrap;
+}
+
+.p2x1 { background-color: var(--piece2x1); }
+.p1x1 { background-color: var(--piece1x1); }
+.pled-g { background-color: var(--led-g); }
+.pled-p { background-color: var(--led-p); }
+
+/* FOOTER */
+.footer {
+  text-align: center; margin-top: 28px;
+  font-size: 10px; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--muted);
+  animation: fadeUp 0.5s ease 0.3s both;
+}
+
+@keyframes fadeDown { from { opacity:0; transform:translateY(-16px); } to { opacity:1; transform:translateY(0); } }
+@keyframes fadeUp   { from { opacity:0; transform:translateY(12px); }  to { opacity:1; transform:translateY(0); } }
+
+@media print {
+  body { background: white; color: black; padding: 0; }
+  body::before, body::after { display: none; }
+  .header, .tabs, .btn-calc, .btn-view, .btn-pdf, .input-row, .footer, .btn-close-modal { display: none !important; }
+  .modal-overlay { position: relative; display: block !important; background: white; padding: 0; }
+  .modal-content { background: white; border: none; max-width: 100%; box-shadow: none; padding: 0; }
+  .measure-top, .measure-left { color: black; border-color: black; }
+  .centro-info { color: black; background: white; border: 1px solid black; }
+  .peca { color: black !important; border: 1px solid #999 !important; background: #eee !important; }
+}
+</style>
 </head>
 <body>
+<div class="wrap">
 
-<div class="card">
-    <div class="logo-container"><h2 style="color: var(--primary); margin:0;">INNOVAR</h2><small>AUDIOVISUAL</small></div>
-    
+  <div class="header">
+    <div class="logo-line">
+      <div class="logo-icon">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <rect x="2"  y="2"  width="7" height="7" rx="1" fill="#00d4ff" opacity="0.9"/>
+          <rect x="11" y="2"  width="7" height="7" rx="1" fill="#00d4ff" opacity="0.5"/>
+          <rect x="2"  y="11" width="7" height="7" rx="1" fill="#00d4ff" opacity="0.5"/>
+          <rect x="11" y="11" width="7" height="7" rx="1" fill="#00d4ff" opacity="0.9"/>
+        </svg>
+      </div>
+      <span class="logo-text">Innovar</span>
+    </div>
+    <div class="logo-sub">Audiovisual</div>
+  </div>
+
+  <div class="card">
     <div class="tabs">
-        <button id="btn-tab-palco" class="tab-btn active" onclick="switchTab('palco')">Palco</button>
-        <button id="btn-tab-led" class="tab-btn" onclick="switchTab('led')">Painel LED</button>
+      <button type="button" id="btn-tab-palco" class="tab-btn active" onclick="switchTab('palco')">⬛ Palco</button>
+      <button type="button" id="btn-tab-led"   class="tab-btn"        onclick="switchTab('led')">▦ Painel LED</button>
     </div>
 
     <div id="form-palco">
-        <div class="input-row">
-            <div class="input-group"><label>Largura (m):</label><input type="number" id="L_palco" placeholder="0"></div>
-            <div class="input-group"><label>Comprimento (m):</label><input type="number" id="C_palco" placeholder="0"></div>
+      <div class="input-row">
+        <div class="field">
+          <label for="L_palco">Largura</label>
+          <div class="input-wrap">
+            <input type="number" id="L_palco" placeholder="0" min="0.5" max="100" step="0.5">
+            <span class="input-unit">m</span>
+          </div>
+          <span class="field-error" id="err-L_palco">Mínimo 0.5m</span>
         </div>
-        <button class="btn-calc" onclick="calcularPalco()">Calcular Estrutura</button>
+        <div class="field">
+          <label for="C_palco">Comprimento</label>
+          <div class="input-wrap">
+            <input type="number" id="C_palco" placeholder="0" min="0.5" max="100" step="0.5">
+            <span class="input-unit">m</span>
+          </div>
+          <span class="field-error" id="err-C_palco">Mínimo 0.5m</span>
+        </div>
+      </div>
+      <button type="button" class="btn-calc" onclick="calcularPalco()">Calcular Estrutura</button>
     </div>
 
     <div id="form-led" style="display:none;">
-        <div class="input-row">
-            <div class="input-group"><label>Largura (m):</label><input type="number" id="L_led" placeholder="0" step="0.5"></div>
-            <div class="input-group"><label>Altura (m):</label><input type="number" id="H_led" placeholder="0" step="0.5"></div>
+      <div class="input-row">
+        <div class="field">
+          <label for="L_led">Largura</label>
+          <div class="input-wrap">
+            <input type="number" id="L_led" placeholder="0" min="0.5" max="50" step="0.5">
+            <span class="input-unit">m</span>
+          </div>
+          <span class="field-error" id="err-L_led">Mínimo 0.5m</span>
         </div>
-        <button class="btn-calc" onclick="calcularLED()">Calcular Painel</button>
+        <div class="field">
+          <label for="H_led">Altura</label>
+          <div class="input-wrap">
+            <input type="number" id="H_led" placeholder="0" min="0.5" max="20" step="0.5">
+            <span class="input-unit">m</span>
+          </div>
+          <span class="field-error" id="err-H_led">Mínimo 0.5m</span>
+        </div>
+      </div>
+      <button type="button" class="btn-calc" onclick="calcularLED()">Calcular Painel</button>
     </div>
 
     <div id="resultado" style="display:none;">
-        <h3 id="print-header" style="text-align:center; color: var(--primary); border-bottom: 1px solid #eee; padding-bottom: 5px;"></h3>
-        <div id="resumo-content" class="resumo-box"></div>
-        
-        <button id="btn-view-led" class="btn-open-modal" onclick="openModal()">
-            VISUALIZAR DESENHO
-        </button>
-
-        <button class="btn-pdf" onclick="window.print()">Gerar PDF / Imprimir</button>
-        <div class="creditos-pwa">dev inovar audiovisual agnaldo</div>
+      <hr class="divider">
+      <div class="result-header">
+        <div class="result-dot"></div>
+        <div class="result-title" id="print-header"></div>
+      </div>
+      <div id="resumo-content" class="resumo-box"></div>
+      <button type="button" class="btn-view" onclick="openModal()">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z" stroke="currentColor" stroke-width="1.2"/>
+          <circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.2"/>
+        </svg>
+        Visualizar Desenho
+      </button>
+      <button type="button" class="btn-pdf" onclick="window.print()">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
+          <path d="M4 4V2h8v2M4 12H3a1 1 0 01-1-1V7a1 1 0 011-1h10a1 1 0 011 1v4a1 1 0 01-1 1h-1M4 10h8v4H4v-4z" stroke="currentColor" stroke-width="1.2"/>
+        </svg>
+        Gerar PDF / Imprimir
+      </button>
     </div>
+  </div>
+
+  <div class="footer">Dev · Innovar Audiovisual · Agnaldo</div>
 </div>
 
 <div id="modal-croqui" class="modal-overlay" onclick="closeModalExterno(event)">
-    <div class="modal-content">
-        <button class="btn-close-modal" onclick="closeModal()">×</button>
-        <div class="drawing-wrapper">
-            <div id="m-top" class="measure-top">0m</div>
-            <div id="m-left" class="measure-left">0m</div>
-            <div id="croqui-container">
-                <div id="info-centro" class="centro-info"></div>
-                <div id="croqui"></div>
-            </div>
-        </div>
+  <div class="modal-content">
+    <button type="button" class="btn-close-modal" onclick="closeModal()">×</button>
+    <div class="drawing-wrapper">
+      <div id="m-top" class="measure-top">0m</div>
+      <div id="m-left" class="measure-left">0m</div>
+      <div id="croqui-container">
+        <div id="info-centro" class="centro-info"></div>
+        <div id="croqui"></div>
+      </div>
     </div>
+  </div>
 </div>
 
 <script>
-function switchTab(tab) {
-    document.getElementById('form-palco').style.display = tab === 'palco' ? 'block' : 'none';
-    document.getElementById('form-led').style.display = tab === 'led' ? 'block' : 'none';
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('btn-tab-' + tab).classList.add('active');
-    document.getElementById('resultado').style.display = 'none';
+const MODULO_TAMANHO_M = 0.5;
+const MODULO_RESOLUCAO = 128;
+const CAP_CASE_GRANDE  = 6;
+const CAP_CASE_PEQUENO = 8;
+const CABOS_POR_M2     = 15 / 9;
+
+const formatBR = v => v.toLocaleString('pt-BR');
+
+function getFloat(id) {
+  const v = parseFloat(document.getElementById(id).value);
+  return isNaN(v) ? null : v;
 }
 
-function openModal() { document.getElementById('modal-croqui').style.display = 'flex'; }
-function closeModal() { document.getElementById('modal-croqui').style.display = 'none'; }
-function closeModalExterno(e) { if(e.target.id === 'modal-croqui') closeModal(); }
+function setError(id, on) {
+  document.getElementById(id)?.classList.toggle('input-error', on);
+  document.getElementById('err-' + id)?.classList.toggle('visible', on);
+}
 
-const formatBR = (val) => val.toLocaleString('pt-BR');
+function validar(campos) {
+  let ok = true;
+  campos.forEach(({ id, min }) => {
+    const v = getFloat(id);
+    const err = v === null || v < min;
+    setError(id, err);
+    if (err) ok = false;
+  });
+  return ok;
+}
+
+function item(label, valor, highlight = false) {
+  const d = document.createElement('div');
+  d.className = 'resumo-item' + (highlight ? ' highlight' : '');
+  const s = document.createElement('small'); s.textContent = label;
+  const sp = document.createElement('span'); sp.textContent = valor;
+  d.appendChild(s); d.appendChild(sp);
+  return d;
+}
+
+function switchTab(tab) {
+  document.getElementById('form-palco').style.display = tab === 'palco' ? 'block' : 'none';
+  document.getElementById('form-led').style.display   = tab === 'led'   ? 'block' : 'none';
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn-tab-' + tab).classList.add('active');
+  document.getElementById('resultado').style.display = 'none';
+}
+
+function openModal()  { document.getElementById('modal-croqui').style.display = 'flex'; }
+function closeModal() { document.getElementById('modal-croqui').style.display = 'none'; }
+function closeModalExterno(e) { if (e.target.id === 'modal-croqui') closeModal(); }
 
 function calcularPalco() {
-    const L = parseInt(document.getElementById('L_palco').value);
-    const C = parseInt(document.getElementById('C_palco').value);
-    if(!L || !C) return;
-    
-    document.getElementById('m-top').innerText = L + "m";
-    document.getElementById('m-left').innerText = C + "m";
-    document.getElementById('info-centro').innerText = `${L} x ${C} m`;
-    
-    const resumo = document.getElementById('resumo-content');
-    const croqui = document.getElementById('croqui');
-    croqui.innerHTML = '';
-    
-    let n2x1 = 0, n1x1 = 0;
-    let ocupado = Array(C).fill().map(() => Array(L).fill(false));
-    let size = L > 15 ? 18 : 30;
+  ['L_palco','C_palco'].forEach(id => setError(id, false));
+  if (!validar([{ id:'L_palco', min:0.5 }, { id:'C_palco', min:0.5 }])) return;
 
-    croqui.style.gridTemplateColumns = `repeat(${L}, ${size}px)`;
-    for (let i = 0; i < C; i++) {
-        for (let j = 0; j < L; j++) {
-            if (ocupado[i][j]) continue;
-            let div = document.createElement('div');
-            div.className = 'peca';
-            if (j + 1 < L && !ocupado[i][j+1]) {
-                ocupado[i][j] = ocupado[i][j+1] = true;
-                div.classList.add('p2x1'); div.style.gridColumn = 'span 2'; div.innerText = '2x1'; n2x1++;
-            } else {
-                ocupado[i][j] = true;
-                div.classList.add('p1x1'); div.innerText = '1x1'; n1x1++;
-            }
-            div.style.height = `${size}px`;
-            croqui.appendChild(div);
-        }
+  const L = Math.round(getFloat('L_palco'));
+  const C = Math.round(getFloat('C_palco'));
+
+  document.getElementById('m-top').innerText      = L + 'm';
+  document.getElementById('m-left').innerText     = C + 'm';
+  document.getElementById('info-centro').innerText = `${L} x ${C} m`;
+
+  const croqui = document.getElementById('croqui');
+  croqui.replaceChildren();
+  const size = L > 15 ? 18 : 30;
+  croqui.style.gridTemplateColumns = `repeat(${L}, ${size}px)`;
+
+  const ocp = Array.from({length:C}, () => new Array(L).fill(false));
+  let n2x1 = 0, n1x1 = 0;
+
+  for (let i = 0; i < C; i++) {
+    for (let j = 0; j < L; j++) {
+      if (ocp[i][j]) continue;
+      const div = document.createElement('div');
+      div.className = 'peca';
+      if (j + 1 < L && !ocp[i][j+1]) {
+        ocp[i][j] = ocp[i][j+1] = true;
+        div.classList.add('p2x1'); div.style.gridColumn = 'span 2'; div.innerText = '2x1'; n2x1++;
+      } else {
+        ocp[i][j] = true;
+        div.classList.add('p1x1'); div.innerText = '1x1'; n1x1++;
+      }
+      div.style.height = size + 'px';
+      croqui.appendChild(div);
     }
-    resumo.innerHTML = `
-        <div class="resumo-item"><small>Peças 2x1m</small><span>${n2x1}</span></div>
-        <div class="resumo-item"><small>Peças 1x1m</small><span>${n1x1}</span></div>
-        <div class="resumo-item"><small>Pés Totais</small><span>${(n2x1 + n1x1) * 4}</span></div>
-        <div class="resumo-item"><small>Área Total</small><span>${formatBR(L * C)} m²</span></div>
-    `;
-    document.getElementById('print-header').innerText = `PALCO: ${L}m x ${C}m`;
-    document.getElementById('resultado').style.display = 'block';
+  }
+
+  const r = document.getElementById('resumo-content');
+  r.replaceChildren(
+    item('Peças 2x1m', n2x1),
+    item('Peças 1x1m', n1x1),
+    item('Pés Totais', (n2x1 + n1x1) * 4),
+    item('Área Total', formatBR(L * C) + ' m²', true)
+  );
+
+  document.getElementById('print-header').innerText  = `PALCO — ${L}m × ${C}m`;
+  document.getElementById('resultado').style.display = 'block';
 }
 
 function calcularLED() {
-    const L = parseFloat(document.getElementById('L_led').value);
-    const H = parseFloat(document.getElementById('H_led').value);
-    if(!L || !H) return;
+  ['L_led','H_led'].forEach(id => setError(id, false));
+  if (!validar([{ id:'L_led', min:MODULO_TAMANHO_M }, { id:'H_led', min:MODULO_TAMANHO_M }])) return;
 
-    const cols05 = Math.round(L / 0.5);
-    const rows05 = Math.round(H / 0.5);
-    const resTotal = `${cols05 * 128} x ${rows05 * 128} px`;
+  const L = getFloat('L_led');
+  const H = getFloat('H_led');
 
-    document.getElementById('m-top').innerText = formatBR(L) + "m";
-    document.getElementById('m-left').innerText = formatBR(H) + "m";
-    document.getElementById('info-centro').innerText = resTotal;
+  const cols  = Math.round(L / MODULO_TAMANHO_M);
+  const rows  = Math.round(H / MODULO_TAMANHO_M);
+  const res   = `${cols * MODULO_RESOLUCAO} × ${rows * MODULO_RESOLUCAO} px`;
+  const area  = parseFloat((L * H).toFixed(4));
+  const cabos = Math.max(2, Math.ceil(area * CABOS_POR_M2));
 
-    const resumo = document.getElementById('resumo-content');
-    const croqui = document.getElementById('croqui');
-    croqui.innerHTML = '';
+  document.getElementById('m-top').innerText      = formatBR(L) + 'm';
+  document.getElementById('m-left').innerText     = formatBR(H) + 'm';
+  document.getElementById('info-centro').innerText = res;
 
-    const area = L * H;
-    const qtdCabos = Math.max(2, Math.ceil((area / 9) * 15));
+  const croqui = document.getElementById('croqui');
+  croqui.replaceChildren();
+  const px = cols > 30 ? 15 : 24;
+  croqui.style.gridTemplateColumns = `repeat(${cols}, ${px}px)`;
 
-    let pxSize = cols05 > 30 ? 15 : 24;
-    croqui.style.gridTemplateColumns = `repeat(${cols05}, ${pxSize}px)`;
-    let p10 = 0, p05 = 0;
-
-    for (let r = 0; r < rows05; r++) {
-        for (let c = 0; c < cols05; c++) {
-            let div = document.createElement('div');
-            div.className = 'peca';
-            if (c + 1 < cols05) {
-                div.classList.add('pled-g'); div.style.gridColumn = 'span 2'; div.innerText = '1m';
-                p10++; c++;
-            } else {
-                div.classList.add('pled-p'); div.innerText = '.5'; p05++;
-            }
-            div.style.height = `${pxSize}px`;
-            croqui.appendChild(div);
-        }
+  let p10 = 0, p05 = 0;
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const div = document.createElement('div');
+      div.className = 'peca';
+      if (c + 1 < cols) {
+        div.classList.add('pled-g'); div.style.gridColumn = 'span 2'; div.innerText = '1m'; p10++; c++;
+      } else {
+        div.classList.add('pled-p'); div.innerText = '.5'; p05++;
+      }
+      div.style.height = px + 'px';
+      croqui.appendChild(div);
     }
+  }
 
-    const capG = 6, capP = 8;
-    const casesG = Math.ceil(p10 / capG), casesP = Math.ceil(p05 / capP);
-    const sobraG = (casesG * capG) - p10, sobraP = (casesP * capP) - p05;
+  const cG = Math.ceil(p10 / CAP_CASE_GRANDE);
+  const cP = Math.ceil(p05 / CAP_CASE_PEQUENO);
+  const bG = cG * CAP_CASE_GRANDE  - p10;
+  const bP = cP * CAP_CASE_PEQUENO - p05;
 
-    resumo.innerHTML = `
-        <div class="resumo-item highlight-res"><small>Resolução</small><span>${resTotal}</span></div>
-        <div class="resumo-item highlight-cabo-link"><small>Cabos Link</small><span>${qtdCabos} un</span></div>
-        <div class="resumo-item highlight-cabo-ac"><small>Cabos AC</small><span>${qtdCabos} un</span></div>
-        <div class="resumo-item"><small>Placas 1m</small><span>${p10}</span></div>
-        <div class="resumo-item"><small>Placas 0.5m</small><span>${p05}</span></div>
-        <div class="resumo-item highlight-case"><small>Total de Cases</small><span>${casesG + casesP}</span></div>
-        <div class="resumo-item highlight-empty"><small>Backup 1m</small><span>${sobraG} un</span></div>
-        <div class="resumo-item highlight-empty"><small>Backup 0.5m</small><span>${sobraP} un</span></div>
-        <div class="resumo-item"><small>Área Total</small><span>${formatBR(area)} m²</span></div>
-    `;
+  const resumo = document.getElementById('resumo-content');
+  resumo.replaceChildren(
+    item('Resolução',    res, true),
+    item('Cabos Link',   cabos + ' un'),
+    item('Cabos AC',     cabos + ' un'),
+    item('Placas 1m',    p10),
+    item('Placas 0.5m',  p05),
+    item('Total Cases',  cG + cP, true),
+    item('Backup 1m',    bG + ' un'),
+    item('Backup 0.5m',  bP + ' un'),
+    item('Área Total',   formatBR(area) + ' m²')
+  );
 
-    document.getElementById('print-header').innerText = `PAINEL LED: ${formatBR(L)}m x ${formatBR(H)}m`;
-    document.getElementById('resultado').style.display = 'block';
+  document.getElementById('print-header').innerText  = `LED — ${formatBR(L)}m × ${formatBR(H)}m`;
+  document.getElementById('resultado').style.display = 'block';
 }
+
+['L_palco','C_palco'].forEach(id =>
+  document.getElementById(id).addEventListener('keydown', e => { if(e.key==='Enter') calcularPalco(); })
+);
+['L_led','H_led'].forEach(id =>
+  document.getElementById(id).addEventListener('keydown', e => { if(e.key==='Enter') calcularLED(); })
+);
 </script>
 </body>
 </html>
